@@ -42,6 +42,8 @@ class AlienInvasion:
             #Ustala liczbę pocisków znajdujących się na ekranie.
             self._update_bullets()
 
+            self._update_aliens()
+
             #Odświeżenie ekranu w trakcie każdej iteracji pętli.
             self._update_screen()
 
@@ -89,6 +91,14 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _update_aliens(self):
+        """
+        Sprawdzenie, czy flota obcych znajduje się przy krawędzi, 
+        a następnie uaktualnienie położenia wszystkich obcych w flocie.
+        """
+        self._check_fleet_edges()
+        self.aliens.update()
+
     def _create_fleet(self):
         """Utworzenie pełnej floty obcych."""
         alien = Alien(self)
@@ -99,7 +109,7 @@ class AlienInvasion:
         #Ustalenie, ile rzędów obcych zmieści się na ekranie.
         ship_height = self.ship.rect.height
         available_space_y = (self.settings.screen_height - 
-            (3 * alien_height) - ship_height)
+            (3 * alien_height) - 2 * ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         #Utworzenie pełnej floty obcych.
@@ -115,6 +125,20 @@ class AlienInvasion:
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _check_fleet_edges(self):
+        """Odpowiednia reakcja, gdy obcy dotrze do krawędzi ekranu."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Przesunięcie całej floty w dół i zmiana kierunku, w którym się 
+        ona porusza."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _update_screen(self):
         """Uaktualnienie obrazów na ekranie i przejście do nowego ekranu."""
