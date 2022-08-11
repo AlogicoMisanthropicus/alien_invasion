@@ -106,11 +106,13 @@ class AlienInvasion:
         #Utworzenie nowej floty i wyśrodkowanie statku.
         self._create_fleet()
         self.ship.center_ship()
+        self.settings.initialize_dynamic_settings()
         pygame.mouse.set_visible(False)
 
     def _fire_bullet(self):
         """Utworzenie nowego pocisku i dodanie go do grupy pocisków."""
-        if len(self.bullets) < self.settings.bullets_allowed:
+        if len(self.bullets) < self.settings.bullets_allowed and (
+            self.stats.game_active):
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
 
@@ -132,12 +134,13 @@ class AlienInvasion:
         #Usunięcie wszystkich pocisków i obcych,
         # między którymi doszło do kolizji.
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, True, True)
+            self.bullets, self.aliens, False, True)
 
         if not self.aliens:
             #Pozbycie się istniejących pocisków i utworzenie nowej floty.
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _update_aliens(self):
         """
