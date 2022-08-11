@@ -1,6 +1,6 @@
 import pygame
 
-class Ship():
+class Ship:
     """Klasa przeznaczona do zarządzania statkiem kosmicznym."""
 
     def __init__(self, ai_game):
