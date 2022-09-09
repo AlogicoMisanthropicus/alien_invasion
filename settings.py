@@ -48,11 +48,3 @@ class Settings:
         self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
-
-    def set_difficulty(self, diff_setting):
-        if diff_setting == 'easy':
-            print('easy')
-        elif diff_setting == 'medium':
-            pass
-        elif diff_setting == 'hard':
-            pass

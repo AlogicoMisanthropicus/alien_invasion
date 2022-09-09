@@ -81,18 +81,6 @@ class AlienInvasion:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
                 self._check_difficulty_buttons(mouse_pos)
-    def _check_keydown_events(self, event):
-        """Reakcja na naciśnięcie klawisza."""
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = True
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = True
-        elif event.key == pygame.K_q:
-            sys.exit()
-        elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
-        elif event.key == pygame.K_g and not self.stats.game_active:
-            self._start_game()
 
     def _check_play_button(self, mouse_pos):
         """Rozpoczęcie nowej gry po kliknięciu przycisku Gra przez 
@@ -113,7 +101,19 @@ class AlienInvasion:
             self.settings.difficulty_level = 'medium'
         elif hard_button_clicked:
             self.settings.difficulty_level = 'hard'
-            
+
+    def _check_keydown_events(self, event):
+        """Reakcja na zdarzenia klawiatura/mysz."""
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = True
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = True
+        elif event.key == pygame.K_q:
+            sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
+        elif event.key == pygame.K_g and not self.stats.game_active:
+            self._start_game()            
     def _check_keyup_events(self, event):
         """Reakcja na zwolnienie klawisza."""
         if event.key == pygame.K_RIGHT:
