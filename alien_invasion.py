@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -26,7 +27,10 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Inwazja obcych")
 
+        #Utworzenie egzemplarza przeznaczonego do przechowywania danych
+        #statystycznych gry oraz utworzenie egzemplarza klasy Scoreboard.
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -127,6 +131,9 @@ class AlienInvasion:
         #Wyzerowanie danych statystycznych gry.
         self.stats.reset_stats()
         self.stats.game_active = True
+        self.sb.prep_score()
+        self.sb.prep_level()
+        self.sb.prep_ships()
 
         #Usunięcie zawartości listy aliens i bullets.
         self.aliens.empty()
@@ -164,11 +171,21 @@ class AlienInvasion:
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
 
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score()
+
         if not self.aliens:
             #Pozbycie się istniejących pocisków i utworzenie nowej floty.
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            #Inkrementacja numeru poziomu.
+            self.stats.level += 1
+            self.sb.prep_level()
 
     def _update_aliens(self):
         """
@@ -224,6 +241,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             #Zmniejszenie wartości przechowywanej w ships_left.
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
 
             #Usunięcie zawartości list aliens i bullets.
             self.aliens.empty()
@@ -265,7 +283,10 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
 
-        #Wyświetlenie przycisku tylko wtedy, gdy gra jest nieaktywna.
+        #Wyświetlenie informacji o punktacji.
+        self.sb.show_score()
+
+        #Wyświetlenie przycisków tylko wtedy, gdy gra jest nieaktywna.
         if not self.stats.game_active:
             self.play_button.draw_button()
             self.easy_button.draw_button()
