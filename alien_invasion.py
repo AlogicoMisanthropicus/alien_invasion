@@ -1,5 +1,6 @@
 import sys
 from time import sleep
+import json
 
 import pygame
 
@@ -76,6 +77,7 @@ class AlienInvasion:
         """Reakcja na zdarzenia generowane przez klawiaturę i mysz."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.save_hscore()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -113,6 +115,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            self.save_hscore()
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -274,6 +277,14 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+
+    def save_hscore(self):
+        """Zapis najlepszego wyniku w pliku."""
+        filename = 'highscore.json'
+        high_score = self.stats.high_score
+
+        with open(filename, 'w') as f:
+            json.dump(high_score, f)
 
     def _update_screen(self):
         """Uaktualnienie obrazów na ekranie i przejście do nowego ekranu."""
